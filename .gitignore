@@ -1,0 +1,43 @@
+# Go binary and object files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.a
+*.out
+
+# Dependency directories
+/vendor/
+
+# Build directories
+/build/
+bin/
+
+# Configuration files
+*.env
+.env.local
+.env.development
+.env.production
+
+# GoLand IDE files
+.idea/
+
+# VSCode IDE files
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Log files
+*.log
+
+# Test result files
+*.test
+
+.env
+
+*.json
