@@ -1,6 +1,6 @@
 package config
 
-import(
+import (
 	"log"
 	"net/http"
 	"os"
@@ -30,7 +30,8 @@ func WebhookLine()  {
 
 	// Initialize Webhook client 
 	http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
-		_ ,err := bot.ParseRequest(r)
+		// _ ,err := bot.ParseRequest(r)
+		events, err := bot.ParseRequest(r)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
 				w.WriteHeader(http.StatusBadRequest)
@@ -40,17 +41,18 @@ func WebhookLine()  {
 			return
 		}
 
-		// events, err := bot.ParseRequest(r)
-		// for _, event := range events {
-		// 	if event.Type == linebot.EventTypeMessage {
-		// 		switch message := event.Message.(type) {
-		// 		case *linebot.TextMessage:
-		// 			if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("คุณส่งข้อความ: "+message.Text)).Do(); err != nil {
-		// 				log.Print(err)
-		// 			}
-		// 		}
-		// 	}
-		// }
+	
+		for _, event := range events {
+			if event.Type == linebot.EventTypeMessage {
+				switch message := event.Message.(type) {
+				case *linebot.TextMessage:
+					if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("คุณส่งข้อความ: "+message.Text)).Do(); err != nil {
+						log.Print(err)
+					}
+				}
+			}
+		}
 	})
+
 	
 }
