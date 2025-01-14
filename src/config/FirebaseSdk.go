@@ -1,16 +1,18 @@
 package config
 
 import (
-	"log"
 	"context"
+	"log"
 	"os"
 
-	firebase "firebase.google.com/go"
+	"firebase.google.com/go"
 	"github.com/joho/godotenv"
 	"google.golang.org/api/option"
+	"cloud.google.com/go/firestore"
 )
 
-func FirebaseSdk() {
+// FirebaseSdk initializes the Firebase SDK and returns a Firestore client
+func FirebaseSdk() (*firestore.Client, error) {
 	// Load .env file
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -19,7 +21,7 @@ func FirebaseSdk() {
 
 	// Get environment variables
 	projectID := os.Getenv("PROJECT_ID")
-	credentialsFile := os.Getenv("CREDENTIALS_FILE") 
+	credentialsFile := os.Getenv("CREDENTIALS_FILE")
 
 	// Initialize Firebase App
 	ctx := context.Background()
@@ -28,14 +30,16 @@ func FirebaseSdk() {
 	app, err := firebase.NewApp(ctx, conf, sa)
 	if err != nil {
 		log.Fatalf("Error initializing Firebase app: %v", err)
+		return nil, err
 	}
 
 	// Initialize Firestore client
 	client, err := app.Firestore(ctx)
 	if err != nil {
 		log.Fatalf("Error initializing Firestore client: %v", err)
+		return nil, err
 	}
-	defer client.Close()
 
 	log.Println("Firebase SDK initialized successfully!")
+	return client, nil
 }

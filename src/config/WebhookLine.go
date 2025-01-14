@@ -9,7 +9,7 @@ import (
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
 
-func WebhookLine()  {
+func WebhookLine() (*linebot.Client, error) {
 	// Load .env file
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -53,6 +53,8 @@ func WebhookLine()  {
 			}
 		}
 	})
+
+	return bot, nil
 
 	
 }

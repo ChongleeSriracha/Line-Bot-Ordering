@@ -1,4 +1,4 @@
-package controller
+package component
 
 import (
 	"bytes"
@@ -17,7 +17,7 @@ func CreateRichMenu(channelAccessToken string) {
 		view.LogError(err, "Error reading richmenu.json file")
 	}
 
-	var richMenu model.RichMenu
+	var richMenu models.RichMenu
 	if err := json.Unmarshal(file, &richMenu); err != nil {
 		view.LogError(err, "Error unmarshalling richmenu.json")
 	}
