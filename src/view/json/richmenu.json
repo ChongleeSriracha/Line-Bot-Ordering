@@ -1,0 +1,72 @@
+{
+  "size": {
+    "width": 2500,
+    "height": 1686
+  },
+  "selected": true,
+  "name": "Rich Menu 1",
+  "chatBarText": "Bulletin",
+  "areas": [
+    {
+      "bounds": {
+        "x": 101,
+        "y": 143,
+        "width": 1105,
+        "height": 998
+      },
+      "action": {
+        "type": "message",
+        "text": "Payment"
+      }
+    },
+    {
+      "bounds": {
+        "x": 94,
+        "y": 1180,
+        "width": 1132,
+        "height": 373
+      },
+      "action": {
+        "type": "message",
+        "text": "Cart"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1308,
+        "y": 139,
+        "width": 500,
+        "height": 680
+      },
+      "action": {
+        "type": "message",
+        "text": "Product"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1901,
+        "y": 138,
+        "width": 500,
+        "height": 680
+      },
+      "action": {
+        "type": "message",
+        "text": "Order"
+      }
+    },
+    {
+      "bounds": {
+        "x": 1304,
+        "y": 870,
+        "width": 500,
+        "height": 680
+      },
+      "action": {
+        "type": "message",
+        "text": "Contact"
+      }
+    }
+ 
+  ]
+}
