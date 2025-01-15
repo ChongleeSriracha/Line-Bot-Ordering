@@ -7,17 +7,17 @@ import (
 	 "net/http"
 )
 
-func CreateJsonFlexProduct() {
+func CreateJsonFlexProduct(UserID string) ([]byte, error) {
     resp, err := http.Get("http://localhost:8081/api/products/avaliable")
     if err != nil {
         log.Printf("Error calling API to get available products: %v", err)
-        return
+        return nil, err
     }
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
         log.Printf("Error: received non-200 response code: %d", resp.StatusCode)
-        return
+        return nil ,err
     }
 
     var result struct {
@@ -25,13 +25,13 @@ func CreateJsonFlexProduct() {
     }
     if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
         log.Printf("Error decoding API response: %v", err)
-        return
+        return nil ,err
     }
 
     file, err := ioutil.ReadFile("./src/view/json/flex-product.json")
     if err != nil {
         log.Printf("Error reading flex-product.json file: %v", err)
-        return
+        return nil ,err
     }
 
     var bubbles []map[string]interface{}
@@ -49,17 +49,20 @@ func CreateJsonFlexProduct() {
 
         bubbles = append(bubbles, modifiedFlexTemplate)
     }
-
     flexMessage := map[string]interface{}{
-        "to":     "U6de5e84c204f582fcea6d9e426d913ce",
+        "to":     UserID,
         "messages": bubbles,
     }
-
+  
     flexMessageJSON, err := json.Marshal(flexMessage)
     if err != nil {
         log.Printf("Error marshalling flex message: %v", err)
-        return
+        return nil, err
     }
 
-    log.Printf("Flex Message with carousel: %s", string(flexMessageJSON))
+    log.Printf("Flex Message with carousel" )
+
+ 
+
+    return flexMessageJSON, nil
 }

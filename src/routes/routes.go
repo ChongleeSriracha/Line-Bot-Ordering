@@ -16,8 +16,12 @@ func RegisterRoutes(r *gin.Engine, client *firestore.Client) {
         })
 
         // Product
-        api.GET("/products", controller.GetAllProducts)
-		api.GET("/products/avaliable", controller.GetAvaliableProducts)
+        api.GET("/products", func(c *gin.Context) {
+            controller.GetAllProducts(c, client)
+        })
+        api.GET("/products/avaliable", func(c *gin.Context) {
+            controller.GetAvaliableProducts(c, client)
+        })
 
 		
 	

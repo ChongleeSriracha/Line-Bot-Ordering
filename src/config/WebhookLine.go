@@ -1,6 +1,7 @@
 package config
 
 import (
+	"line-Bot-Ordering/src/handler"
 	"log"
 	"net/http"
 	"os"
@@ -16,21 +17,19 @@ func WebhookLine() (*linebot.Client, error) {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
-
 	// Get environment variables
 	chanelSecret := os.Getenv("SECRET_TOKEN")
-	chanelAcess := os.Getenv("ACCESS_TOKEN")
+	chanelAccess := os.Getenv("ACCESS_TOKEN")
 
 	// Initialize LineBot
-	bot,err := linebot.New(chanelSecret,chanelAcess)
-
+	bot, err := linebot.New(chanelSecret, chanelAccess)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Initialize Webhook client 
 	http.HandleFunc("/webhook", func(w http.ResponseWriter, r *http.Request) {
-		// _ ,err := bot.ParseRequest(r)
+		// Parse the request to get events
 		events, err := bot.ParseRequest(r)
 		if err != nil {
 			if err == linebot.ErrInvalidSignature {
@@ -41,20 +40,9 @@ func WebhookLine() (*linebot.Client, error) {
 			return
 		}
 
-	
-		for _, event := range events {
-			if event.Type == linebot.EventTypeMessage {
-				switch message := event.Message.(type) {
-				case *linebot.TextMessage:
-					if _, err := bot.ReplyMessage(event.ReplyToken, linebot.NewTextMessage("คุณส่งข้อความ: "+message.Text)).Do(); err != nil {
-						log.Print(err)
-					}
-				}
-			}
-		}
+		// Call the handler with the events and channelAccessToken
+		handler.WebhookHandler(events, bot, chanelAccess)
 	})
 
 	return bot, nil
-
-	
 }

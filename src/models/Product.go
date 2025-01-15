@@ -2,9 +2,10 @@ package models
 
 import (
 	"context"
+	
 	"log"
-	"line-Bot-Ordering/src/config"
 
+	"cloud.google.com/go/firestore"
 )
 
 type Product struct {
@@ -17,14 +18,10 @@ type Product struct {
 }
 
 // GetProduct retrieves all products from Firestore
-func GetProduct() ([]Product, error) {
+func GetProduct(client *firestore.Client) ([]Product, error) {
 	var products []Product
 
-	// Get Firestore client from config
-	client, err := config.FirebaseSdk()
-	if err != nil {
-		return nil, err // Return an error if Firebase client initialization failed
-	}
+	
 
 	// Use the Firebase client to fetch documents from the 'products' collection
 	iter := client.Collection("Product").Documents(context.Background())
@@ -46,14 +43,10 @@ func GetProduct() ([]Product, error) {
 }
 
 
-func GetAvaliableProduct()([]Product ,error)  {
+func GetAvaliableProduct(client *firestore.Client)([]Product ,error)  {
 
 	var products []Product 
 
-	client ,err := config.FirebaseSdk()
-	if err != nil {
-		return nil, err
-	}
 
 	iter :=  client.Collection("Product").Where("status", "==", true).Documents(context.Background())
 
