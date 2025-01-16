@@ -11,15 +11,13 @@ import (
 	"cloud.google.com/go/firestore"
 )
 
-// FirebaseSdk initializes the Firebase SDK and returns a Firestore client
+
 func FirebaseSdk() (*firestore.Client, error) {
-	// Load .env file
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
-
-	// Get environment variables
 	projectID := os.Getenv("PROJECT_ID")
 	credentialsFile := os.Getenv("CREDENTIALS_FILE")
 

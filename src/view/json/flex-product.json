@@ -1,16 +1,13 @@
 {
-  "type": "flex",
-  "altText": "Bubble Messages",
-  "contents": {
-    "type": "carousel",
-    "contents": [
-      {
+
+
+ 
         "type": "bubble",
         "size": "mega",
         "direction": "ltr",
         "hero": {
           "type": "image",
-          "url": "https://media-hosting.imagekit.io//2089f2c862c74bb9/sunflower.jpg?Expires=1831453451&Key-Pair-Id=K2ZIVPTIP2VGHC&Signature=aydXBDSAUUnTdveQx7kRpdthHlzfCtDkLVl9eX5JGwgGr85vEpkoPVVre6WlEzo6wa6iXEaC7cRgwiuNQzk0jz1PpWgtPfLJ-zRH2GfCs64Hxn~VKyqA-rMSeAimaE6Co2WC0fdUCM92IbFhBs6qYOLqGom6lGoAu9A4WLw6cR73OuNSMIlr3bUMraROkB36U8ZrtqpZr6hR6xKEVAQJtWQJh0kjoB80mzJcil~TCuBZWkMKm6zzXfzpkImkw2XaFwtqzuAv3gG3b0f6TZEnUtNfN3JZx5M~fq2MNQLFERjiFsVuLzakQ6ZCuthdQaWNCWrF4eSJgBkrRyNe1tzvIQ__",
+          "url": "UrlImg",
           "size": "full",
           "aspectRatio": "20:13",
           "aspectMode": "cover"
@@ -22,13 +19,13 @@
           "contents": [
             {
               "type": "text",
-              "text": "Flower-1",
+              "text": "ProductName",
               "weight": "bold",
               "size": "xl"
             },
             {
               "type": "text",
-              "text": "3 flower, 1 holding",
+              "text": "Description",
               "size": "xxs",
               "color": "#AAAAAA",
               "wrap": true
@@ -40,7 +37,7 @@
               "contents": [
                 {
                   "type": "text",
-                  "text": "฿100",
+                  "text": "Price",
                   "weight": "bold",
                   "size": "xxl",
                   "color": "#000000"
@@ -60,12 +57,11 @@
               "action": {
                 "type": "message",
                 "label": "เพิ่มลงในตะกร้า",
-                "text": "product 1"
+                "text": "ProductName"
               }
             }
           ]
         }
-      }
-    ]
-  }
+      
+  
 }
