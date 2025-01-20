@@ -106,6 +106,9 @@ func uploadRichMenuImage(richMenuID, channelAccessToken string) {
 }
 
 func setDefaultRichMenu(richMenuID, channelAccessToken string) {
+    
+    
+  
     url := fmt.Sprintf("https://api.line.me/v2/bot/user/all/richmenu/%s", richMenuID)
     req, err := http.NewRequest("POST", url, nil)
     if err != nil {
@@ -182,5 +185,13 @@ func FlexProduct(userID,channelAccessToken string)(error){
 	}
 
 	return nil
+
+}
+
+
+//Order 
+func OrderProduct(userID,channelAccessToken string)(error){            
+
+    return nil 
 
 }

@@ -23,7 +23,10 @@ func RegisterRoutes(r *gin.Engine, client *firestore.Client) {
             controller.GetAvaliableProducts(c, client)
         })
 
-		
+
+		api.POST("/user", func(c *gin.Context) {        
+            controller.CreateUser(c, client)
+        })
 	
     }
 
