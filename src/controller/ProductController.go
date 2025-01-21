@@ -27,3 +27,20 @@ func GetAvaliableProducts(c *gin.Context, client *firestore.Client) {
 	}
 	c.JSON(http.StatusOK, gin.H{"products": products})
 }
+
+
+func GetIDProduct (c *gin.Context,Client *firestore.Client){
+	name := c.DefaultQuery("name", "")
+	if name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Product name is required"})
+		return
+	}
+
+	product, err := models.GetProductByName(Client, name)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"product": product})
+
+}

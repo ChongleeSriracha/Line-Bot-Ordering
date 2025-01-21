@@ -14,9 +14,8 @@ type User struct {
 	UserID string `json:"userID"`
 }
 
-// CreateUser adds a new user to the Firestore collection if the user doesn't already exist.
 func CreateUser(client *firestore.Client, user User) error {
-	// Check if the user already exists
+	
 	exists, err := CheckUserExists(client, user.UserID)
 	if err != nil {
 		log.Printf("Failed to check if user exists: %v", err)
@@ -27,7 +26,6 @@ func CreateUser(client *firestore.Client, user User) error {
 		return errors.New("user already exists")
 	}
 
-	// Add the user to the Firestore collection
 	_, _, err = client.Collection("User").Add(context.Background(), user)
 	if err != nil {
 		log.Printf("Failed to add user: %v", err)
@@ -38,18 +36,16 @@ func CreateUser(client *firestore.Client, user User) error {
 }
 
 func CheckUserExists(client *firestore.Client, userID string) (bool, error) {
-	// Perform the query to check if a user with the given userID exists
 	query := client.Collection("User").Where("UserID", "==", userID).Documents(context.Background())
 	defer query.Stop()
 
-	// Log the userID being checked
 	log.Printf("Checking if user with ID %s exists in Firestore...", userID)
 
-	// Iterate through the results to check if any document matches
+
 	doc, err := query.Next()
 	if err != nil {
 		if err == iterator.Done {
-			// No documents found
+		
 			log.Printf("No user found with ID %s", userID)
 			return false, nil
 		}
@@ -57,7 +53,35 @@ func CheckUserExists(client *firestore.Client, userID string) (bool, error) {
 		return false, err
 	}
 
-	// Document found
+
 	log.Printf("User found with ID: %v", doc.Ref.ID)
 	return true, nil
+}
+
+type UserWithID struct {
+	IDUser string `json:"DocumentId"`
+	Name   string `json:"name"`
+	UserID string `json:"userID"`
+}
+
+func GetIDUser(client *firestore.Client, UserID string) (UserWithID, error) {
+	var userwithid UserWithID
+
+	iter := client.Collection("User").Where("UserID", "==", UserID).Documents(context.Background())
+	defer iter.Stop()
+
+	doc, err := iter.Next()
+	if err != nil {
+		log.Printf("Error retrieving document: %v", err)
+		return userwithid, err
+	}
+
+	if err := doc.DataTo(&userwithid); err != nil {
+		log.Printf("Error parsing document data: %v", err)
+		return userwithid, err
+	}
+
+	userwithid.IDUser = doc.Ref.ID
+
+	return userwithid, nil
 }

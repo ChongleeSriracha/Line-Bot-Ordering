@@ -17,26 +17,23 @@ type Product struct {
 	URL         string `json:"url"`
 }
 
-// GetProduct retrieves all products from Firestore
+
 func GetProduct(client *firestore.Client) ([]Product, error) {
 	var products []Product
 
-	
-
-	// Use the Firebase client to fetch documents from the 'products' collection
 	iter := client.Collection("Product").Documents(context.Background())
 	for {
 		doc, err := iter.Next()
 		if err != nil {
-			break // Exit the loop when no more documents are available
+			break 
 		}
 
 		var product Product
 		if err := doc.DataTo(&product); err != nil {
 			log.Printf("Error parsing document: %v", err)
-			continue // Skip this document in case of parsing errors
+			continue 
 		}
-		products = append(products, product) // Add the product to the list
+		products = append(products, product) 
 	}
 
 	return products, nil
@@ -63,9 +60,40 @@ func GetAvaliableProduct(client *firestore.Client)([]Product ,error)  {
 			continue 
 		}
 
-		products = append(products, product) // Add the product to the list
+		products = append(products, product) 
 
 	}
 
 	return products, nil
+}
+
+type ProductID struct {
+	ProductID string `json:"DocumentId"`
+	Count       int    `json:"count"`
+	Description string `json:"description"`
+	Name        string `json:"name"`
+	Price       int `json:"price"`
+	Status      bool   `json:"status"`
+	URL         string `json:"url"`
+}
+
+func GetProductByName(client *firestore.Client, name string) (ProductID, error) {
+	var productid ProductID
+
+	iter := client.Collection("Product").Where("name", "==", name).Documents(context.Background())
+	defer iter.Stop()
+
+	doc, err := iter.Next()
+	if err != nil {
+		log.Printf("Error retrieving document: %v", err)
+		return productid, err
+	}
+
+	if err := doc.DataTo(&productid); err != nil {
+		log.Printf("Error parsing document data: %v", err)
+		return productid, err
+	}
+	productid.ProductID = doc.Ref.ID
+
+	return productid, nil
 }

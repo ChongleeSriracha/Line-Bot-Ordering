@@ -25,5 +25,20 @@ func  CreateUser(c* gin.Context,client *firestore.Client,) {
 	c.JSON(http.StatusOK, gin.H{"message": "User created successfully"})
 }
 
+func GetIDUser(c *gin.Context, Client *firestore.Client) {
+	UserID := c.DefaultQuery("UserID", "")
 
+	if UserID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "UserID is required"})
+		return
+	}
+
+	userwithid, err := models.GetIDUser(Client, UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"userwithid": userwithid})
+}
 

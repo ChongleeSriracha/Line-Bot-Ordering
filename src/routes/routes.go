@@ -22,15 +22,29 @@ func RegisterRoutes(r *gin.Engine, client *firestore.Client) {
         api.GET("/products/avaliable", func(c *gin.Context) {
             controller.GetAvaliableProducts(c, client)
         })
+        api.GET("/product", func(c *gin.Context) {  
+            controller.GetIDProduct(c, client)
+        })
 
         // User
 		api.POST("/user", func(c *gin.Context) {        
             controller.CreateUser(c, client)
         })
+        api.GET("/user/id", func(c *gin.Context) {
+            controller.GetIDUser(c,client)
+        } )
 
         //Cart
         api.GET("/cart", func(c *gin.Context) {
             controller.GetCurrentCart(c, client)
+        })
+
+        api.POST("/cart/add", func(c *gin.Context) {
+            controller.CreateCart(c, client)
+        })
+
+        api.PUT("/cart/update", func(c *gin.Context) {
+            controller.UpdateProductInCart(c, client)
         })
 
 	
