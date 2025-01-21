@@ -22,7 +22,7 @@ func GetCurrentCart(c *gin.Context, client *firestore.Client) {
 		return
 	}
 
-	carts, err := models.GetCurrentCart(client, userWithID)
+	carts, _, err := models.GetCurrentCart(client, userWithID)
 	if err != nil {
 		if err.Error() == "no carts found with current == true" {
 			c.JSON(http.StatusNotFound, gin.H{"error": "No current cart found"})

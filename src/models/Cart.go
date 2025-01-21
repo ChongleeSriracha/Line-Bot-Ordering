@@ -9,7 +9,6 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
-
 )
 
 type Cart struct {
@@ -26,16 +25,17 @@ type CartDetails struct {
 	Quantity int `json:"Quantity"`
 }
 
-func GetCurrentCart(client *firestore.Client, user UserWithID) ([]Cart, error) {
+func GetCurrentCart(client *firestore.Client, user UserWithID) ([]Cart, []string, error) {
 	var carts []Cart
+	var cartDocIDs []string
 
-	fmt.Println("iduser = %s",user.IDUser)
+	fmt.Printf("iduser = %s\n", user.IDUser)
 	iter := client.Collection("Cart").
-			Where("Current", "==", true).
-			Where("User", "==", user.IDUser).
-			OrderBy("UpdateAt", firestore.Desc).
-			Limit(1).
-			Documents(context.Background())
+		Where("Current", "==", true).
+		Where("User", "==", user.IDUser).
+		OrderBy("UpdateAt", firestore.Desc).
+		Limit(1).
+		Documents(context.Background())
 	defer iter.Stop()
 
 	for {
@@ -45,7 +45,7 @@ func GetCurrentCart(client *firestore.Client, user UserWithID) ([]Cart, error) {
 		}
 		if err != nil {
 			log.Printf("Error retrieving document: %v", err)
-			return nil, err
+			return nil, nil, err
 		}
 
 		var cart Cart
@@ -54,75 +54,104 @@ func GetCurrentCart(client *firestore.Client, user UserWithID) ([]Cart, error) {
 			continue
 		}
 
+		
 		carts = append(carts, cart)
+		cartDocIDs = append(cartDocIDs, doc.Ref.ID)
+		fmt.Println(cart)
+		fmt.Println("=================================")
+		fmt.Println(cartDocIDs)
+
 	}
 
 	if len(carts) == 0 {
 		log.Println("No current cart found")
-		return nil, errors.New("no carts found with current == true")
+		return nil, nil, errors.New("no carts found with current == true")
 	}
 
-	return carts, nil
+	return carts, cartDocIDs, nil
 }
 
 func UpdateProductInCart(client *firestore.Client, user UserWithID, product ProductID) error {
-	currentCart, err := GetCurrentCart(client, user)
-	if err != nil {
+
+	currentCart, cartDocIDs, err := GetCurrentCart(client, user)
+	if err != nil && err.Error() != "no carts found with current == true" {
 		log.Printf("Failed to get current cart: %v", err)
 		return err
 	}
 
+	var cart *Cart
+	var cartDocID string
+
 	if len(currentCart) == 0 {
-		return errors.New("No current cart found")
-	}
+		
+		log.Println("No current cart found. Creating a new cart...")
+		cart = &Cart{
+			Product:  make(map[string]CartDetails),
+			Count:    0,
+			Price:    0,
+			User:     user.IDUser,
+			Current:  true,
+			UpdateAt: time.Now(),
+		}
 
-	cart := &currentCart[0]
-	productID := product.ProductID
-	productPrice := product.Price
-
-	
-	if cart.Product == nil {
-		cart.Product = make(map[string]CartDetails)
-	}
-
-	if details, exists := cart.Product[productID]; exists {
-		details.Quantity += 1
-		cart.Product[productID] = details
-		cart.Count += 1
-		cart.Price += productPrice
-	} else {
+		productID := product.ProductID
+		productPrice := product.Price
 		cart.Product[productID] = CartDetails{Price: productPrice, Quantity: 1}
 		cart.Count += 1
 		cart.Price += productPrice
+
+		
+		docRef, _, err := client.Collection("Cart").Add(context.Background(), cart)
+		if err != nil {
+			log.Printf("Failed to create new cart: %v", err)
+			return err
+		}
+		cartDocID = docRef.ID
+		log.Printf("New cart created successfully with ID: %s", cartDocID)
+	} else {
+		
+		cart = &currentCart[0]
+		cartDocID = cartDocIDs[0] 
+
+		
+		productID := product.ProductID
+		productPrice := product.Price
+		if details, exists := cart.Product[productID]; exists {
+			details.Quantity += 1
+			cart.Product[productID] = details
+			cart.Count += 1
+			cart.Price += productPrice
+		} else {
+			cart.Product[productID] = CartDetails{Price: productPrice, Quantity: 1}
+			cart.Count += 1
+			cart.Price += productPrice
+		}
+
+
+		validateCart(cart)
+
+	
+		_, err = client.Collection("Cart").Doc(cartDocID).Set(context.Background(), cart)
+		if err != nil {
+			log.Printf("Failed to update cart: %v", err)
+			return err
+		}
+		log.Printf("Cart updated successfully with ID: %s", cartDocID)
 	}
 
-
-	validateCart(cart)
-
-	_, err = client.Collection("Cart").Doc(user.UserID).Set(context.Background(), cart)
-	if err != nil {
-		log.Printf("Failed to update cart: %v", err)
-		return err
-	}
-
-	log.Printf("Cart updated successfully: %+v", cart)
 	return nil
 }
 
-
 func CreateCart(client *firestore.Client, cart Cart) error {
-
 	_, _, err := client.Collection("Cart").Add(context.Background(), cart)
-
 	if err != nil {
 		log.Printf("Failed to add cart: %v", err)
 		return err
 	}
-
 	return nil
-
 }
 
+// validateCart checks and corrects the cart's total price and count.
 func validateCart(cart *Cart) {
 	var totalPrice, totalCount int
 
@@ -139,7 +168,6 @@ func validateCart(cart *Cart) {
 		fmt.Printf("Expected Count: %d, Actual Count: %d\n", totalCount, cart.Count)
 		cart.Price = totalPrice
 		cart.Count = totalCount
-		fmt.Printf("change to correct to data:\n")
-
+		fmt.Printf("Cart corrected to valid data.\n")
 	}
 }

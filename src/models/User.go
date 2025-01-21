@@ -69,7 +69,7 @@ func GetIDUser(client *firestore.Client, UserID string) (UserWithID, error) {
 
 	iter := client.Collection("User").Where("UserID", "==", UserID).Documents(context.Background())
 	defer iter.Stop()
-
+	
 	doc, err := iter.Next()
 	if err != nil {
 		log.Printf("Error retrieving document: %v", err)

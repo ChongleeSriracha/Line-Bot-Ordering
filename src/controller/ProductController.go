@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GetAllProducts handles the request to retrieve all products
 func GetAllProducts(c *gin.Context, client *firestore.Client) {
 	products, err := models.GetProduct(client)
 	if err != nil {

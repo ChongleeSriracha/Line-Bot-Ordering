@@ -38,6 +38,5 @@ Thumbs.db
 # Test result files
 *.test
 
-.env
-
+# Firebase admin SDK credentials
 ordering-3f440-firebase-adminsdk-ct7y7-2cef5e8fa9.json

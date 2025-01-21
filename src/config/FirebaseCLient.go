@@ -21,7 +21,6 @@ func FirebaseSdk() (*firestore.Client, error) {
 	projectID := os.Getenv("PROJECT_ID")
 	credentialsFile := os.Getenv("CREDENTIALS_FILE")
 
-	// Initialize Firebase App
 	ctx := context.Background()
 	conf := &firebase.Config{ProjectID: projectID}
 	sa := option.WithCredentialsFile(credentialsFile)
@@ -31,7 +30,6 @@ func FirebaseSdk() (*firestore.Client, error) {
 		return nil, err
 	}
 
-	// Initialize Firestore client
 	client, err := app.Firestore(ctx)
 	if err != nil {
 		log.Fatalf("Error initializing Firestore client: %v", err)

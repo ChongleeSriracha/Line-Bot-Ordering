@@ -8,7 +8,6 @@ import (
 	"github.com/line/line-bot-sdk-go/v7/linebot"
 )
 
-// WebhookHandler handles incoming LINE webhook events
 func HandleEventData(events []*linebot.Event, bot *linebot.Client, channelAccessToken string) {
 	for _, event := range events {
 		userID := event.Source.UserID
@@ -34,7 +33,6 @@ func HandleEventData(events []*linebot.Event, bot *linebot.Client, channelAccess
 	}
 }
 
-// handleEventAction processes user actions and sends appropriate responses
 func HandleEventAction(action string, userID, name string,channelAccessToken string) {
 	if action == "Product" {
 		err := services.FlexProduct(userID, channelAccessToken)
@@ -54,7 +52,6 @@ func HandleEventAction(action string, userID, name string,channelAccessToken str
 	}
 }
 
-// handlePostbackEvent handles LINE postback events
 func handlePostbackEvent(event *linebot.Event, bot *linebot.Client, userID string) {
 	panic("unimplemented")
 }
